@@ -27,3 +27,13 @@
 *.exe
 *.out
 *.app
+
+cmake-build-debug/
+/.idea/.name
+/.idea/inspectionProfiles/Project_Default.xml
+*.directory
+/.idea/fabric-game.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
