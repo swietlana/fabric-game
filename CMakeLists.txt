@@ -130,6 +130,10 @@ else()
     add_executable(${APP_NAME} ${GAME_SRC} ${GAME_HEADERS})
 endif()
 
+set(COCOS2D_X ON)
+add_subdirectory(lib/CrossLayout/)
+target_link_libraries(${APP_NAME} CrossLayout)
+
 target_link_libraries(${APP_NAME} cocos2d)
 
 set(APP_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
