@@ -42,14 +42,15 @@ bool GameScreen::init() {
 		updateTape(dt);
 	}, "updateTape");
 
+	schedule([this](float dt) {
+		_speed += 20;
+	}, 10, "speed");
 
 	return true;
 }
 
 void GameScreen::updateTape(float dt) {
-	int i = 100;
-	_tape->setPositionX(_tape->getPosition().x - i * dt);
-
+	_tape->setPositionX(_tape->getPosition().x - _speed * dt);
 
 	auto children = _tape->getChildren();
 	std::sort(children.begin(), children.end(), [](const cocos2d::Node *left, const cocos2d::Node *right) {

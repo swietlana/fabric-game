@@ -17,4 +17,6 @@ public:
 
 private:
 	cocos2d::Node* _tape = nullptr;
+	float _speed = 100;
+
 };
