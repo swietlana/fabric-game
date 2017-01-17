@@ -3,7 +3,7 @@
 //
 
 #include "GameScreen.h"
-
+#include <iostream>
 #include <algorithm>
 #include <crosslayout/ComposerCocos.h>
 
@@ -14,10 +14,16 @@ bool GameScreen::init() {
 	}
 	CrossLayout::ComposerCocos composer;
 
+//	auto background = cocos2d::Sprite::create("background.png");
+//	addChild(background);
+//	background->setScale(0.4);
+//	composer.center(background).inParent();
 
 	_tape = cocos2d::Node::create();
 	addChild(_tape);
 
+	_tapeWithJars = cocos2d::Node::create();
+	addChild(_tapeWithJars);
 
 	auto tape1 = cocos2d::Sprite::create("tape.png");
 	_tape->addChild(tape1);
@@ -46,11 +52,20 @@ bool GameScreen::init() {
 		_speed += 20;
 	}, 10, "speed");
 
+	schedule([this](float dt) {
+		auto jar = createJar(JarType::noCoverJar, Defect::bigDefect);
+		_tapeWithJars->addChild(jar);
+		jar->setAnchorPoint({0, 0});
+		const auto spawnPosition = _tape->convertToNodeSpace({getContentSize().width, 0});
+		jar->setPosition({spawnPosition.x, 240});
+	}, 2, "addJar");
+
 	return true;
 }
 
 void GameScreen::updateTape(float dt) {
 	_tape->setPositionX(_tape->getPosition().x - _speed * dt);
+	_tapeWithJars->setPosition(_tape->getPosition());
 
 	auto children = _tape->getChildren();
 	std::sort(children.begin(), children.end(), [](const cocos2d::Node *left, const cocos2d::Node *right) {
@@ -60,11 +75,78 @@ void GameScreen::updateTape(float dt) {
 	CrossLayout::ComposerCocos composer;
 	auto last = children.back();
 
+	const auto outOfSight = _tape->convertToNodeSpace({0, 0});
+
 	for (auto child : children) {
-		if (_tape->convertToWorldSpace(child->getPosition()).x < 0) {
+		if (child->getPosition().x < outOfSight.x) {
 			composer.move(child).toRightOf(last);
 			last = child;
 		}
 	}
+
+
+	for (auto child : _tapeWithJars->getChildren()) {
+		if ((child->getPosition().x + child->getContentSize().width) < outOfSight.x) {
+			child->removeFromParent();
+		}
+	}
+}
+
+cocos2d::Node *GameScreen::createJar(JarType jarType, Defect defect) {
+	CrossLayout::ComposerCocos composer;
+	std::string jarView;
+
+	switch (jarType) {
+		case JarType::bigBlackJar:
+			jarView = "jars/bigBlackJar.png";
+			break;
+		case JarType::bigWhiteJar:
+			jarView = "jars/bigWhiteJar.png";
+			break;
+		case JarType::trapezeJar:
+			jarView = "jars/trapezeJar.png";
+			break;
+		case JarType::tallJar:
+			jarView = "jars/tallJar.png";
+			break;
+		case JarType::noCoverJar:
+			jarView = "jars/noCoverJar.png";
+			break;
+		default:
+
+			break;
+	}
+	auto jarSprite = cocos2d::Sprite::create(jarView);
+	jarSprite->setScale(0.2);
+
+	std::string defectView;
+	switch (defect) {
+		case Defect::bigDefect:
+			defectView = "jars/bigDefect.png";
+			break;
+		case Defect::midDefect:
+			defectView = "jars/midDefect.png";
+			break;
+		case Defect::longDefect:
+			defectView = "jars/longDefect.png";
+			break;
+		case Defect::smallDefect:
+			defectView = "jars/smallDefect.png";
+			break;
+		case Defect::littleDefect:
+			defectView = "jars/littleDefect.png";
+			break;
+		default:
+			break;
+	}
+
+	if (defectView.empty() == false) {
+		auto defectSprite = cocos2d::Sprite::create(defectView);
+		jarSprite->addChild(defectSprite);
+		composer.center(defectSprite).inParent();
+
+	}
+
+	return jarSprite;
 }
 

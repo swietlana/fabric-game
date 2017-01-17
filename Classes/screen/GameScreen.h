@@ -15,8 +15,18 @@ public:
 
 	void updateTape(float dt);
 
+	enum Defect {
+		bigDefect, midDefect, longDefect, littleDefect, smallDefect, noDefect
+	};
+
+	enum JarType {
+		trapezeJar, bigWhiteJar, bigBlackJar, tallJar, noCoverJar
+	};
 private:
-	cocos2d::Node* _tape = nullptr;
+	cocos2d::Node *_tape = nullptr;
+	cocos2d::Node *_tapeWithJars = nullptr;
 	float _speed = 100;
+
+	cocos2d::Node *createJar(JarType jarType, Defect defect);
 
 };
