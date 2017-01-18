@@ -16,12 +16,13 @@ public:
 	void updateTape(float dt);
 
 	enum Defect {
-		bigDefect, midDefect, longDefect, littleDefect, smallDefect, noDefect
+		bigDefect, midDefect, longDefect, littleDefect, smallDefect, noDefect, lastDefect
 	};
 
 	enum JarType {
-		trapezeJar, bigWhiteJar, bigBlackJar, tallJar, noCoverJar
+		trapezeJar, bigWhiteJar, bigBlackJar, tallJar, noCoverJar, lastJar
 	};
+
 private:
 	cocos2d::Node *_tape = nullptr;
 	cocos2d::Node *_tapeWithJars = nullptr;

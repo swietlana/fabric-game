@@ -31,7 +31,6 @@ bool GameScreen::init() {
 	composer.leftEdge(tape1).moveTo().parentLeftEdge();
 	composer.bottomEdge(tape1).moveTo().parentBottomEdge(200);
 
-
 	auto tape2 = cocos2d::Sprite::create("tape.png");
 	_tape->addChild(tape2);
 	tape2->setAnchorPoint({1, 1});
@@ -53,7 +52,7 @@ bool GameScreen::init() {
 	}, 10, "speed");
 
 	schedule([this](float dt) {
-		auto jar = createJar(JarType::noCoverJar, Defect::bigDefect);
+		auto jar = createJar(static_cast<JarType>(rand() % JarType::lastJar), static_cast<Defect>(rand() % Defect::lastDefect));
 		_tapeWithJars->addChild(jar);
 		jar->setAnchorPoint({0, 0});
 		const auto spawnPosition = _tape->convertToNodeSpace({getContentSize().width, 0});
@@ -146,7 +145,6 @@ cocos2d::Node *GameScreen::createJar(JarType jarType, Defect defect) {
 		composer.center(defectSprite).inParent();
 
 	}
-
 	return jarSprite;
 }
 
