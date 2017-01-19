@@ -3,9 +3,12 @@
 //
 
 #include "GameScreen.h"
+#include "StartScreen.h"
+#include "GameOverScreen.h"
 #include <iostream>
 #include <algorithm>
 #include <crosslayout/ComposerCocos.h>
+#include <ui/UIButton.h>
 
 bool GameScreen::init()
 {
@@ -20,6 +23,20 @@ bool GameScreen::init()
 	//	addChild(background);
 	//	background->setScale(0.4);
 	//	composer.center(background).inParent();
+
+	auto backButton = cocos2d::ui::Button::create("cancel.png");
+	backButton->setScale(0.5);
+	addChild(backButton);
+	composer.leftEdge(backButton).moveTo().parentLeftEdge(20);
+	composer.topEdge(backButton).moveTo().parentTopEdge(20);
+
+	backButton->addTouchEventListener([](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type)
+									  {
+										  if (type == cocos2d::ui::Widget::TouchEventType::ENDED)
+										  {
+											  cocos2d::Director::getInstance()->pushScene(StartScreen::create());
+										  }
+									  });
 
 	_tape = cocos2d::Node::create();
 	addChild(_tape);
@@ -231,6 +248,10 @@ void GameScreen::deletedByUser(cocos2d::Node* jar)
 	}
 	cocos2d::log("Points %d", _points);
 	updatePointsLabel();
+	if (_points <= -30)
+	{
+		cocos2d::Director::getInstance()->replaceScene(GameOver::create());
+	}
 }
 
 void GameScreen::deletedByTape(cocos2d::Node* jar)
@@ -245,6 +266,10 @@ void GameScreen::deletedByTape(cocos2d::Node* jar)
 	}
 	cocos2d::log("Points %d", _points);
 	updatePointsLabel();
+	if (_points <= -30)
+	{
+		cocos2d::Director::getInstance()->replaceScene(GameOver::create());
+	}
 }
 
 void GameScreen::updatePointsLabel()

@@ -109,7 +109,7 @@ set(GAME_HEADERS
   Classes/AppDelegate.h
   Classes/HelloWorldScene.h
   ${PLATFORM_SPECIFIC_HEADERS}
-        Classes/screen/StartScreen.cpp Classes/screen/StartScreen.h Classes/screen/GameScreen.cpp Classes/screen/GameScreen.h)
+        Classes/screen/StartScreen.cpp Classes/screen/StartScreen.h Classes/screen/GameScreen.cpp Classes/screen/GameScreen.h Classes/screen/GameOverScreen.cpp Classes/screen/GameOverScreen.h)
 
 
 # Configure libcocos2d
