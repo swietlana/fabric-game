@@ -95,8 +95,9 @@ void GameScreen::updateTape(float dt)
 
 	for (auto child : getActiveJars())
 	{
-		if ((child->getPosition().x + child->getContentSize().width) < outOfSight.x)
+		if ((child->getPosition().x + child->getContentSize().width * child->getScaleX()) < outOfSight.x)
 		{
+			deletedByTape(child);
 			child->removeFromParent();
 		}
 	}
@@ -156,6 +157,7 @@ cocos2d::Node* GameScreen::createJar(JarType jarType, Defect defect)
 	if (defectView.empty() == false)
 	{
 		auto defectSprite = cocos2d::Sprite::create(defectView);
+		defectSprite->setName("defect");
 		jarSprite->addChild(defectSprite);
 		composer.center(defectSprite).inParent();
 
@@ -170,19 +172,21 @@ void GameScreen::onEnter()
 	_touchListener->setSwallowTouches(true);
 	_touchListener->onTouchBegan = [this](cocos2d::Touch* touch, cocos2d::Event* event)
 	{
-
-		cocos2d::log("Touch %f %f", touch->getLocation().x, touch->getLocation().y);
 		cocos2d::Vec2 location = _tapeWithJars->convertToNodeSpace(touch->getLocation());
 		for (auto child : getActiveJars())
 		{
 			if (child->getBoundingBox().containsPoint(location))
 			{
+				deletedByUser(child);
 				child->removeFromParent();
 				return true;
 			}
 		}
+
 		return false;
+
 	};
+
 	cocos2d::Director::getInstance()->getEventDispatcher()
 			->addEventListenerWithSceneGraphPriority(_touchListener, this);
 
@@ -204,3 +208,33 @@ std::vector<cocos2d::Node*> GameScreen::getActiveJars()
 	return jars;
 }
 
+bool GameScreen::hasDefect(cocos2d::Node* jar)
+{
+	return jar->getChildByName("defect") != nullptr;
+}
+
+void GameScreen::deletedByUser(cocos2d::Node* jar)
+{
+	if (hasDefect(jar))
+	{
+		points += 10;
+	}
+	else
+	{
+		points -= 5;
+	}
+	cocos2d::log("Points %d", points);
+}
+
+void GameScreen::deletedByTape(cocos2d::Node* jar)
+{
+	if (hasDefect(jar))
+	{
+		points -= 5;
+	}
+	else
+	{
+		points += 10;
+	}
+	cocos2d::log("Points %d", points);
+}
