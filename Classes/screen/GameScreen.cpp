@@ -9,7 +9,7 @@
 
 bool GameScreen::init() {
 
-	if (cocos2d::Scene::init() == false) {
+	if (inherited::init() == false) {
 		return false;
 	}
 	CrossLayout::ComposerCocos composer;
@@ -52,12 +52,14 @@ bool GameScreen::init() {
 	}, 10, "speed");
 
 	schedule([this](float dt) {
-		auto jar = createJar(static_cast<JarType>(rand() % JarType::lastJar), static_cast<Defect>(rand() % Defect::lastDefect));
+		auto jar = createJar(static_cast<JarType>(rand() % JarType::lastJar),
+							 static_cast<Defect>(rand() % Defect::lastDefect));
 		_tapeWithJars->addChild(jar);
 		jar->setAnchorPoint({0, 0});
 		const auto spawnPosition = _tape->convertToNodeSpace({getContentSize().width, 0});
 		jar->setPosition({spawnPosition.x, 240});
 	}, 2, "addJar");
+
 
 	return true;
 }
@@ -84,7 +86,7 @@ void GameScreen::updateTape(float dt) {
 	}
 
 
-	for (auto child : _tapeWithJars->getChildren()) {
+	for (auto child : getActiveJars()) {
 		if ((child->getPosition().x + child->getContentSize().width) < outOfSight.x) {
 			child->removeFromParent();
 		}
@@ -146,5 +148,39 @@ cocos2d::Node *GameScreen::createJar(JarType jarType, Defect defect) {
 
 	}
 	return jarSprite;
+}
+
+void GameScreen::onEnter() {
+	inherited::onEnter();
+	_touchListener = cocos2d::EventListenerTouchOneByOne::create();
+	_touchListener->setSwallowTouches(true);
+	_touchListener->onTouchBegan = [this](cocos2d::Touch *touch, cocos2d::Event *event) {
+
+		cocos2d::log("Touch %f %f",touch->getLocation().x,touch->getLocation().y);
+		cocos2d::Vec2 location = _tapeWithJars->convertToNodeSpace(touch->getLocation());
+		for (auto child : getActiveJars()) {
+			if (child->getBoundingBox().containsPoint(location)) {
+				child->removeFromParent();
+				return true;
+			}
+		}
+		return false;
+	};
+	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_touchListener,
+																								   this);
+
+}
+
+void GameScreen::onExit() {
+	inherited::onExit();
+	cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListenersForTarget(this, false);
+}
+
+std::vector<cocos2d::Node *> GameScreen::getActiveJars() {
+	std::vector<cocos2d::Node *> jars;
+	for (auto child : _tapeWithJars->getChildren()) {
+		jars.push_back(child);
+	}
+	return jars;
 }
 
