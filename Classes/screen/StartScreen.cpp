@@ -12,9 +12,10 @@
 
 using namespace std;
 
-
-bool StartScreen::init() {
-	if (cocos2d::Scene::init() == false) {
+bool StartScreen::init()
+{
+	if (cocos2d::Scene::init() == false)
+	{
 		return false;
 	}
 
@@ -24,17 +25,18 @@ bool StartScreen::init() {
 	addChild(playButton);
 	composer.center(playButton).inParent();
 
-	playButton->addTouchEventListener([](Ref *sender, cocos2d::ui::Widget::TouchEventType type) {
-		switch (type) {
-			case cocos2d::ui::Widget::TouchEventType::ENDED:
-				cocos2d::Director::getInstance()->pushScene(GameScreen::create());
-				break;
-			default:
-				break;
-		}
+	playButton->addTouchEventListener([](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type)
+									  {
+										  switch (type)
+										  {
+											  case cocos2d::ui::Widget::TouchEventType::ENDED:
+												  cocos2d::Director::getInstance()->pushScene(GameScreen::create());
+												  break;
+											  default:
+												  break;
+										  }
 
-	});
-
+									  });
 
 	auto exit = cocos2d::Sprite::create("menu/exit_button.png");
 	addChild(exit);

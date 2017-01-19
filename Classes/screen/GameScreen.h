@@ -6,8 +6,9 @@
 
 #include <cocos2d.h>
 
-class GameScreen : public cocos2d::Scene {
-using inherited = cocos2d::Scene;
+class GameScreen : public cocos2d::Scene
+{
+	using inherited = cocos2d::Scene;
 public:
 	CREATE_FUNC(GameScreen);
 
@@ -15,11 +16,13 @@ public:
 
 	void updateTape(float dt);
 
-	enum Defect {
+	enum Defect
+	{
 		bigDefect, midDefect, longDefect, littleDefect, smallDefect, noDefect, lastDefect
 	};
 
-	enum JarType {
+	enum JarType
+	{
 		trapezeJar, bigWhiteJar, bigBlackJar, tallJar, noCoverJar, lastJar
 	};
 
@@ -28,12 +31,12 @@ public:
 	void onExit() override;
 
 private:
-	cocos2d::Node *_tape = nullptr;
-	cocos2d::Node *_tapeWithJars = nullptr;
-	cocos2d::EventListenerTouchOneByOne *_touchListener = nullptr;
+	cocos2d::Node* _tape = nullptr;
+	cocos2d::Node* _tapeWithJars = nullptr;
+	cocos2d::EventListenerTouchOneByOne* _touchListener = nullptr;
 	float _speed = 100;
 
-	cocos2d::Node *createJar(JarType jarType, Defect defect);
+	cocos2d::Node* createJar(JarType jarType, Defect defect);
 	std::vector<cocos2d::Node*> getActiveJars();
 
 };

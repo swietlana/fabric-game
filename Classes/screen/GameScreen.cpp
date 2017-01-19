@@ -7,17 +7,19 @@
 #include <algorithm>
 #include <crosslayout/ComposerCocos.h>
 
-bool GameScreen::init() {
+bool GameScreen::init()
+{
 
-	if (inherited::init() == false) {
+	if (inherited::init() == false)
+	{
 		return false;
 	}
 	CrossLayout::ComposerCocos composer;
 
-//	auto background = cocos2d::Sprite::create("background.png");
-//	addChild(background);
-//	background->setScale(0.4);
-//	composer.center(background).inParent();
+	//	auto background = cocos2d::Sprite::create("background.png");
+	//	addChild(background);
+	//	background->setScale(0.4);
+	//	composer.center(background).inParent();
 
 	_tape = cocos2d::Node::create();
 	addChild(_tape);
@@ -43,33 +45,37 @@ bool GameScreen::init() {
 	composer.center(tape3).in(tape1).vertically();
 	composer.leftEdge(tape3).moveTo().rightEdge(tape2);
 
-	schedule([this](float dt) {
-		updateTape(dt);
-	}, "updateTape");
+	schedule([this](float dt)
+			 {
+				 updateTape(dt);
+			 }, "updateTape");
 
-	schedule([this](float dt) {
-		_speed += 20;
-	}, 10, "speed");
+	schedule([this](float dt)
+			 {
+				 _speed += 20;
+			 }, 10, "speed");
 
-	schedule([this](float dt) {
-		auto jar = createJar(static_cast<JarType>(rand() % JarType::lastJar),
-							 static_cast<Defect>(rand() % Defect::lastDefect));
-		_tapeWithJars->addChild(jar);
-		jar->setAnchorPoint({0, 0});
-		const auto spawnPosition = _tape->convertToNodeSpace({getContentSize().width, 0});
-		jar->setPosition({spawnPosition.x, 240});
-	}, 2, "addJar");
-
+	schedule([this](float dt)
+			 {
+				 auto jar = createJar(static_cast<JarType>(rand() % JarType::lastJar), static_cast<Defect>(rand() %
+																										   Defect::lastDefect));
+				 _tapeWithJars->addChild(jar);
+				 jar->setAnchorPoint({0, 0});
+				 const auto spawnPosition = _tape->convertToNodeSpace({getContentSize().width, 0});
+				 jar->setPosition({spawnPosition.x, 240});
+			 }, 2, "addJar");
 
 	return true;
 }
 
-void GameScreen::updateTape(float dt) {
+void GameScreen::updateTape(float dt)
+{
 	_tape->setPositionX(_tape->getPosition().x - _speed * dt);
 	_tapeWithJars->setPosition(_tape->getPosition());
 
 	auto children = _tape->getChildren();
-	std::sort(children.begin(), children.end(), [](const cocos2d::Node *left, const cocos2d::Node *right) {
+	std::sort(children.begin(), children.end(), [](const cocos2d::Node* left, const cocos2d::Node* right)
+	{
 		return left->getPosition().x < right->getPosition().x;
 	});
 
@@ -78,26 +84,31 @@ void GameScreen::updateTape(float dt) {
 
 	const auto outOfSight = _tape->convertToNodeSpace({0, 0});
 
-	for (auto child : children) {
-		if (child->getPosition().x < outOfSight.x) {
+	for (auto child : children)
+	{
+		if (child->getPosition().x < outOfSight.x)
+		{
 			composer.move(child).toRightOf(last);
 			last = child;
 		}
 	}
 
-
-	for (auto child : getActiveJars()) {
-		if ((child->getPosition().x + child->getContentSize().width) < outOfSight.x) {
+	for (auto child : getActiveJars())
+	{
+		if ((child->getPosition().x + child->getContentSize().width) < outOfSight.x)
+		{
 			child->removeFromParent();
 		}
 	}
 }
 
-cocos2d::Node *GameScreen::createJar(JarType jarType, Defect defect) {
+cocos2d::Node* GameScreen::createJar(JarType jarType, Defect defect)
+{
 	CrossLayout::ComposerCocos composer;
 	std::string jarView;
 
-	switch (jarType) {
+	switch (jarType)
+	{
 		case JarType::bigBlackJar:
 			jarView = "jars/bigBlackJar.png";
 			break;
@@ -121,7 +132,8 @@ cocos2d::Node *GameScreen::createJar(JarType jarType, Defect defect) {
 	jarSprite->setScale(0.2);
 
 	std::string defectView;
-	switch (defect) {
+	switch (defect)
+	{
 		case Defect::bigDefect:
 			defectView = "jars/bigDefect.png";
 			break;
@@ -141,7 +153,8 @@ cocos2d::Node *GameScreen::createJar(JarType jarType, Defect defect) {
 			break;
 	}
 
-	if (defectView.empty() == false) {
+	if (defectView.empty() == false)
+	{
 		auto defectSprite = cocos2d::Sprite::create(defectView);
 		jarSprite->addChild(defectSprite);
 		composer.center(defectSprite).inParent();
@@ -150,35 +163,42 @@ cocos2d::Node *GameScreen::createJar(JarType jarType, Defect defect) {
 	return jarSprite;
 }
 
-void GameScreen::onEnter() {
+void GameScreen::onEnter()
+{
 	inherited::onEnter();
 	_touchListener = cocos2d::EventListenerTouchOneByOne::create();
 	_touchListener->setSwallowTouches(true);
-	_touchListener->onTouchBegan = [this](cocos2d::Touch *touch, cocos2d::Event *event) {
+	_touchListener->onTouchBegan = [this](cocos2d::Touch* touch, cocos2d::Event* event)
+	{
 
-		cocos2d::log("Touch %f %f",touch->getLocation().x,touch->getLocation().y);
+		cocos2d::log("Touch %f %f", touch->getLocation().x, touch->getLocation().y);
 		cocos2d::Vec2 location = _tapeWithJars->convertToNodeSpace(touch->getLocation());
-		for (auto child : getActiveJars()) {
-			if (child->getBoundingBox().containsPoint(location)) {
+		for (auto child : getActiveJars())
+		{
+			if (child->getBoundingBox().containsPoint(location))
+			{
 				child->removeFromParent();
 				return true;
 			}
 		}
 		return false;
 	};
-	cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_touchListener,
-																								   this);
+	cocos2d::Director::getInstance()->getEventDispatcher()
+			->addEventListenerWithSceneGraphPriority(_touchListener, this);
 
 }
 
-void GameScreen::onExit() {
+void GameScreen::onExit()
+{
 	inherited::onExit();
 	cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListenersForTarget(this, false);
 }
 
-std::vector<cocos2d::Node *> GameScreen::getActiveJars() {
-	std::vector<cocos2d::Node *> jars;
-	for (auto child : _tapeWithJars->getChildren()) {
+std::vector<cocos2d::Node*> GameScreen::getActiveJars()
+{
+	std::vector<cocos2d::Node*> jars;
+	for (auto child : _tapeWithJars->getChildren())
+	{
 		jars.push_back(child);
 	}
 	return jars;

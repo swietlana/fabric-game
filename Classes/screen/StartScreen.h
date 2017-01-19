@@ -6,7 +6,8 @@
 
 #include <cocos2d.h>
 
-class StartScreen : public cocos2d::Scene {
+class StartScreen : public cocos2d::Scene
+{
 
 public:
 	CREATE_FUNC(StartScreen);

@@ -3,18 +3,20 @@
 
 USING_NS_CC;
 
-Scene *HelloWorld::createScene() {
+Scene* HelloWorld::createScene()
+{
 	return HelloWorld::create();
 }
 
 // on "init" you need to initialize your instance
-bool HelloWorld::init() {
+bool HelloWorld::init()
+{
 	//////////////////////////////
 	// 1. super init first
-	if (!Scene::init()) {
+	if (!Scene::init())
+	{
 		return false;
 	}
-
 
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -25,12 +27,10 @@ bool HelloWorld::init() {
 
 	// add a "close" icon to exit the progress. it's an autorelease object
 	auto closeItem = MenuItemImage::create(
-			"CloseNormal.png",
-			"CloseSelected.png",
-			CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+			"CloseNormal.png", "CloseSelected.png", CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
 
 	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width / 2,
-								origin.y + closeItem->getContentSize().height / 2));
+			origin.y + closeItem->getContentSize().height / 2));
 
 	// create menu, it's an autorelease object
 	auto menu = Menu::create(closeItem, NULL);
@@ -46,8 +46,8 @@ bool HelloWorld::init() {
 	auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
 
 	// position the label on the center of the screen
-	label->setPosition(Vec2(origin.x + visibleSize.width / 2,
-							origin.y + visibleSize.height - label->getContentSize().height));
+	label->setPosition(
+			Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height - label->getContentSize().height));
 
 	// add the label as a child to this layer
 	this->addChild(label, 1);
@@ -64,8 +64,8 @@ bool HelloWorld::init() {
 	return true;
 }
 
-
-void HelloWorld::menuCloseCallback(Ref *pSender) {
+void HelloWorld::menuCloseCallback(Ref* pSender)
+{
 	//Close the cocos2d-x game scene and quit the application
 	Director::getInstance()->end();
 
