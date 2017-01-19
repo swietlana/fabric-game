@@ -45,6 +45,12 @@ bool GameScreen::init()
 	composer.center(tape3).in(tape1).vertically();
 	composer.leftEdge(tape3).moveTo().rightEdge(tape2);
 
+	_showPoints = cocos2d::Label::createWithSystemFont("0", "Arial", 32);
+	addChild(_showPoints);
+	_showPoints->enableOutline(cocos2d::Color4B::WHITE, 1);
+	composer.rightEdge(_showPoints).moveTo().parentRightEdge(20);
+	composer.topEdge(_showPoints).moveTo().parentTopEdge(20);
+
 	schedule([this](float dt)
 			 {
 				 updateTape(dt);
@@ -217,24 +223,31 @@ void GameScreen::deletedByUser(cocos2d::Node* jar)
 {
 	if (hasDefect(jar))
 	{
-		points += 10;
+		_points += 10;
 	}
 	else
 	{
-		points -= 5;
+		_points -= 5;
 	}
-	cocos2d::log("Points %d", points);
+	cocos2d::log("Points %d", _points);
+	updatePointsLabel();
 }
 
 void GameScreen::deletedByTape(cocos2d::Node* jar)
 {
 	if (hasDefect(jar))
 	{
-		points -= 5;
+		_points -= 5;
 	}
 	else
 	{
-		points += 10;
+		_points += 10;
 	}
-	cocos2d::log("Points %d", points);
+	cocos2d::log("Points %d", _points);
+	updatePointsLabel();
+}
+
+void GameScreen::updatePointsLabel()
+{
+	_showPoints->setString(std::to_string(_points));
 }
