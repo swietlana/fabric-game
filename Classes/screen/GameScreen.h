@@ -35,6 +35,8 @@ private:
 	cocos2d::Node* _tapeWithJars = nullptr;
 	cocos2d::EventListenerTouchOneByOne* _touchListener = nullptr;
 	cocos2d::Label* _showPoints = nullptr;
+	cocos2d::Label* _helloTip = nullptr;
+	cocos2d::Sprite* _moneySign = nullptr;
 
 	float _speed = 100;
 	int _points = 0;
@@ -45,5 +47,7 @@ private:
 	void deletedByUser(cocos2d::Node* jar);
 	void deletedByTape(cocos2d::Node* jar);
 	void updatePointsLabel();
+	void createRandomJar();
+	void checkForGameOver();
 
 };

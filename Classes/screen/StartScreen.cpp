@@ -21,7 +21,13 @@ bool StartScreen::init()
 
 	CrossLayout::ComposerCocos composer;
 
-	auto playButton = cocos2d::ui::Button::create("menu/play_button.png");
+	auto background = cocos2d::Sprite::create("background.png");
+	addChild(background);
+	background->setScale(0.5);
+	background->setOpacity(100);
+	composer.center(background).inParent();
+
+	auto playButton = cocos2d::ui::Button::create("play_red.png");
 	addChild(playButton);
 	composer.center(playButton).inParent();
 
@@ -33,7 +39,7 @@ bool StartScreen::init()
 										  }
 									  });
 
-	auto exitButton = cocos2d::ui::Button::create("menu/exit_button.png");
+	auto exitButton = cocos2d::ui::Button::create("power_red.png");
 	addChild(exitButton);
 	composer.topEdge(exitButton).moveTo().bottomEdge(playButton, 30);
 	composer.leftEdge(exitButton).moveTo().parentLeftEdge(100);
@@ -46,10 +52,11 @@ bool StartScreen::init()
 										  }
 									  });
 
-	auto stats = cocos2d::Sprite::create("menu/chart_button.png");
+	auto stats = cocos2d::Sprite::create("award.png");
 	addChild(stats);
 	composer.topEdge(stats).moveTo().bottomEdge(playButton, 30);
 	composer.rightEdge(stats).moveTo().parentRightEdge(100);
 
 	return true;
 }
+

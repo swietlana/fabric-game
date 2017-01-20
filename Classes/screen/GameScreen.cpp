@@ -6,6 +6,7 @@
 #include "StartScreen.h"
 #include "GameOverScreen.h"
 #include <iostream>
+#include <fstream>
 #include <algorithm>
 #include <crosslayout/ComposerCocos.h>
 #include <ui/UIButton.h>
@@ -19,10 +20,10 @@ bool GameScreen::init()
 	}
 	CrossLayout::ComposerCocos composer;
 
-	//	auto background = cocos2d::Sprite::create("background.png");
-	//	addChild(background);
-	//	background->setScale(0.4);
-	//	composer.center(background).inParent();
+	auto background = cocos2d::Sprite::create("background.png");
+	addChild(background);
+	background->setScale(0.5);
+	composer.center(background).inParent();
 
 	auto backButton = cocos2d::ui::Button::create("cancel.png");
 	backButton->setScale(0.5);
@@ -34,6 +35,7 @@ bool GameScreen::init()
 									  {
 										  if (type == cocos2d::ui::Widget::TouchEventType::ENDED)
 										  {
+
 											  cocos2d::Director::getInstance()->pushScene(StartScreen::create());
 										  }
 									  });
@@ -48,7 +50,7 @@ bool GameScreen::init()
 	_tape->addChild(tape1);
 	tape1->setAnchorPoint({1, 1});
 	composer.leftEdge(tape1).moveTo().parentLeftEdge();
-	composer.bottomEdge(tape1).moveTo().parentBottomEdge(200);
+	composer.bottomEdge(tape1).moveTo().parentBottomEdge(150);
 
 	auto tape2 = cocos2d::Sprite::create("tape.png");
 	_tape->addChild(tape2);
@@ -62,11 +64,34 @@ bool GameScreen::init()
 	composer.center(tape3).in(tape1).vertically();
 	composer.leftEdge(tape3).moveTo().rightEdge(tape2);
 
-	_showPoints = cocos2d::Label::createWithSystemFont("0", "Arial", 32);
+	_moneySign = cocos2d::Sprite::create("money.png");
+	addChild(_moneySign);
+	_moneySign->setScale(0.5);
+	composer.topEdge(_moneySign).moveTo().parentTopEdge(20);
+	composer.rightEdge(_moneySign).moveTo().parentRightEdge(10);
+	composer.center(_moneySign).in(backButton).vertically();
+
+	_showPoints = cocos2d::Label::createWithTTF("0", "fonts/Verdana.ttf", 32);
 	addChild(_showPoints);
-	_showPoints->enableOutline(cocos2d::Color4B::WHITE, 1);
-	composer.rightEdge(_showPoints).moveTo().parentRightEdge(20);
-	composer.topEdge(_showPoints).moveTo().parentTopEdge(20);
+	_showPoints->setTextColor(cocos2d::Color4B(51, 51, 51, 200));
+	composer.center(_showPoints).in(_moneySign).vertically();
+	composer.rightEdge(_showPoints).moveTo().leftEdge(_moneySign, 20);
+
+	_helloTip = cocos2d::Label::createWithSystemFont("Crush broken jars", "Verdana", 40);
+	addChild(_helloTip);
+	_helloTip->setTextColor(cocos2d::Color4B::WHITE);
+	composer.center(_helloTip).inParent().horizontally();
+	composer.topEdge(_helloTip).moveTo().bottomEdge(backButton, 260);
+	auto helloScaleUp = cocos2d::ScaleTo::create(0.5f, 1.5f);
+	auto helloScaleDown = cocos2d::ScaleTo::create(0.5f, 1.0f);
+	_helloTip->runAction(cocos2d::Sequence::createWithTwoActions(helloScaleUp, helloScaleDown));
+	auto helloTint = cocos2d::TintTo::create(1.0f, 51, 51, 51);
+	_helloTip->runAction(cocos2d::Sequence::createWithTwoActions(
+			cocos2d::DelayTime::create(8)
+			, cocos2d::Spawn::create(helloTint
+									 , cocos2d::FadeTo::create(1, 128)
+									 , nullptr
+			)));
 
 	schedule([this](float dt)
 			 {
@@ -75,17 +100,13 @@ bool GameScreen::init()
 
 	schedule([this](float dt)
 			 {
-				 _speed += 20;
-			 }, 10, "speed");
+				 _speed += 30;
+			 }, 15, "speed");
 
 	schedule([this](float dt)
 			 {
-				 auto jar = createJar(static_cast<JarType>(rand() % JarType::lastJar), static_cast<Defect>(rand() %
-																										   Defect::lastDefect));
-				 _tapeWithJars->addChild(jar);
-				 jar->setAnchorPoint({0, 0});
-				 const auto spawnPosition = _tape->convertToNodeSpace({getContentSize().width, 0});
-				 jar->setPosition({spawnPosition.x, 240});
+				 cocos2d::log("Speed %f", _speed);
+				 createRandomJar();
 			 }, 2, "addJar");
 
 	return true;
@@ -153,7 +174,7 @@ cocos2d::Node* GameScreen::createJar(JarType jarType, Defect defect)
 			break;
 	}
 	auto jarSprite = cocos2d::Sprite::create(jarView);
-	jarSprite->setScale(0.2);
+	jarSprite->setScale(0.3);
 
 	std::string defectView;
 	switch (defect)
@@ -248,10 +269,7 @@ void GameScreen::deletedByUser(cocos2d::Node* jar)
 	}
 	cocos2d::log("Points %d", _points);
 	updatePointsLabel();
-	if (_points <= -30)
-	{
-		cocos2d::Director::getInstance()->replaceScene(GameOver::create());
-	}
+	checkForGameOver();
 }
 
 void GameScreen::deletedByTape(cocos2d::Node* jar)
@@ -266,13 +284,37 @@ void GameScreen::deletedByTape(cocos2d::Node* jar)
 	}
 	cocos2d::log("Points %d", _points);
 	updatePointsLabel();
+	checkForGameOver();
+}
+
+void GameScreen::updatePointsLabel()
+{
+	CrossLayout::ComposerCocos composer;
+	_showPoints->setString(std::to_string(_points));
+	composer.center(_showPoints).in(_moneySign).vertically();
+	composer.rightEdge(_showPoints).moveTo().leftEdge(_moneySign, 10);
+	auto scaleUpPoints = cocos2d::EaseExponentialInOut::create(cocos2d::ScaleTo::create(0.2f, 1.5f));
+	auto scaleDownPoints = cocos2d::EaseExponentialInOut::create(cocos2d::ScaleTo::create(0.3f, 1.0f));
+	auto seqScalePoints = cocos2d::Sequence::create({scaleUpPoints, scaleDownPoints});
+	_showPoints->runAction(seqScalePoints);
+
+}
+
+void GameScreen::checkForGameOver()
+{
 	if (_points <= -30)
 	{
 		cocos2d::Director::getInstance()->replaceScene(GameOver::create());
 	}
 }
 
-void GameScreen::updatePointsLabel()
+void GameScreen::createRandomJar()
 {
-	_showPoints->setString(std::to_string(_points));
+	auto jar = createJar(static_cast<JarType>(rand() % JarType::lastJar), static_cast<Defect>(
+			rand() %
+			Defect::lastDefect));
+	_tapeWithJars->addChild(jar);
+	jar->setAnchorPoint({0, 0});
+	const auto spawnPosition = _tape->convertToNodeSpace({getContentSize().width, 0});
+	jar->setPosition({spawnPosition.x, 190});
 }
