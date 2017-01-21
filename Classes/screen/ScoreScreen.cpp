@@ -49,7 +49,7 @@ bool ScoreScreen::init()
 										  }
 									  });
 
-	std::vector<std::string> keys = {"User1", "User2", "User3", "User4", "User5", "User6", "User7", "User8"
+	std::vector<std::string> keys = {"top", "hardcore", "champion", "player1", "best", "monster", "User1", "User2"
 			, "highScore"};
 	std::vector<PlayerScore> players;
 	for (auto key : keys)

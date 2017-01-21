@@ -63,9 +63,10 @@ bool GameScreen::init()
 	composer.center(tape3).in(tape1).vertically();
 	composer.leftEdge(tape3).moveTo().rightEdge(tape2);
 
-	_moneySign = cocos2d::Sprite::create("money.png");
+	_moneySign = cocos2d::Sprite::create("dollar.png");
 	addChild(_moneySign);
 	_moneySign->setScale(0.5);
+	_moneySign->setColor(cocos2d::Color3B(51,51,51));
 	composer.topEdge(_moneySign).moveTo().parentTopEdge(20);
 	composer.rightEdge(_moneySign).moveTo().parentRightEdge(10);
 	composer.center(_moneySign).in(backButton).vertically();
@@ -99,14 +100,14 @@ bool GameScreen::init()
 
 	schedule([this](float dt)
 			 {
-				 _speed += 30;
+				 _speed += 50;
 			 }, 15, "speed");
 
 	schedule([this](float dt)
 			 {
 				 cocos2d::log("Speed %f", _speed);
 				 createRandomJar();
-			 }, 2, "addJar");
+			 }, 1.8, "addJar");
 
 	return true;
 }

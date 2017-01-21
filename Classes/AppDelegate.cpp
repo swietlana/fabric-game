@@ -52,7 +52,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 	}
 
 	// turn on display FPS
-	director->setDisplayStats(!false);
+	director->setDisplayStats(false);
 
 	// set FPS. the default value is 1.0/60 if you don't call this
 	director->setAnimationInterval(1.0f / 60);
@@ -88,14 +88,14 @@ bool AppDelegate::applicationDidFinishLaunching()
 	// run
 	director->runWithScene(scene);
 
-	cocos2d::UserDefault::getInstance()->setIntegerForKey("User1", 120);
-	cocos2d::UserDefault::getInstance()->setIntegerForKey("User2", 210);
-	cocos2d::UserDefault::getInstance()->setIntegerForKey("User3", 80);
-	cocos2d::UserDefault::getInstance()->setIntegerForKey("User4", -20);
-	cocos2d::UserDefault::getInstance()->setIntegerForKey("User5", 15);
-	cocos2d::UserDefault::getInstance()->setIntegerForKey("User6", 100);
-	cocos2d::UserDefault::getInstance()->setIntegerForKey("User7", 30);
-	cocos2d::UserDefault::getInstance()->setIntegerForKey("User8", -10);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("top", 120);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("hardcore", 1600);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("champion", 920);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("player1", 330);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("best", 450);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("monster", 80);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User1", 30);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User2", -10);
 	return true;
 }
 
