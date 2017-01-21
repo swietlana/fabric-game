@@ -1,3 +1,3 @@
 # fabric-game
 
-![playTheGame - gif](/README/playTheGame.gif)
+![playTheGame - gif](playTheGame.gif)
