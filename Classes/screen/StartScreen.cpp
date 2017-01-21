@@ -5,9 +5,9 @@
 #include <iostream>
 #include "StartScreen.h"
 #include "GameScreen.h"
+#include "ScoreScreen.h"
 #include <crosslayout/ComposerCocos.h>
 #include <ui/UIButton.h>
-
 #include <functional>
 
 using namespace std;
@@ -39,6 +39,11 @@ bool StartScreen::init()
 										  }
 									  });
 
+	auto scaleUpPlay = cocos2d::EaseExponentialInOut::create(cocos2d::ScaleTo::create(1.0f, 1.2f));
+	auto scaleDownPlay = cocos2d::EaseExponentialInOut::create(cocos2d::ScaleTo::create(1.0f, 1.0f));
+	auto seqScalePlay = cocos2d::Sequence::create({scaleUpPlay, scaleDownPlay});
+	playButton->runAction(cocos2d::RepeatForever::create(seqScalePlay));
+
 	auto exitButton = cocos2d::ui::Button::create("power_red.png");
 	addChild(exitButton);
 	composer.topEdge(exitButton).moveTo().bottomEdge(playButton, 30);
@@ -52,10 +57,18 @@ bool StartScreen::init()
 										  }
 									  });
 
-	auto stats = cocos2d::Sprite::create("award.png");
-	addChild(stats);
-	composer.topEdge(stats).moveTo().bottomEdge(playButton, 30);
-	composer.rightEdge(stats).moveTo().parentRightEdge(100);
+	auto scoresButton = cocos2d::ui::Button::create("scores.png");
+	addChild(scoresButton);
+	composer.topEdge(scoresButton).moveTo().bottomEdge(playButton, 30);
+	composer.rightEdge(scoresButton).moveTo().parentRightEdge(100);
+
+	scoresButton->addTouchEventListener([](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type)
+								  {
+									  if (type == cocos2d::ui::Widget::TouchEventType::ENDED)
+									  {
+										  cocos2d::Director::getInstance()->pushScene(ScoreScreen::create());
+									  }
+								  });
 
 	return true;
 }
