@@ -6,7 +6,6 @@
 #include "StartScreen.h"
 #include "GameOverScreen.h"
 #include <iostream>
-#include <fstream>
 #include <algorithm>
 #include <crosslayout/ComposerCocos.h>
 #include <ui/UIButton.h>
@@ -31,11 +30,11 @@ bool GameScreen::init()
 	composer.leftEdge(backButton).moveTo().parentLeftEdge(20);
 	composer.topEdge(backButton).moveTo().parentTopEdge(20);
 
-	backButton->addTouchEventListener([](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type)
+	backButton->addTouchEventListener([this](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type)
 									  {
 										  if (type == cocos2d::ui::Widget::TouchEventType::ENDED)
 										  {
-
+											  saveScore();
 											  cocos2d::Director::getInstance()->pushScene(StartScreen::create());
 										  }
 									  });
@@ -304,6 +303,7 @@ void GameScreen::checkForGameOver()
 {
 	if (_points <= -30)
 	{
+		saveScore();
 		cocos2d::Director::getInstance()->replaceScene(GameOver::create());
 	}
 }
@@ -317,4 +317,12 @@ void GameScreen::createRandomJar()
 	jar->setAnchorPoint({0, 0});
 	const auto spawnPosition = _tape->convertToNodeSpace({getContentSize().width, 0});
 	jar->setPosition({spawnPosition.x, 190});
+}
+
+void GameScreen::saveScore()
+{
+	if (_points > cocos2d::UserDefault::getInstance()->getIntegerForKey("highScore", 0))
+	{
+		cocos2d::UserDefault::getInstance()->setIntegerForKey("highScore", _points);
+	}
 }

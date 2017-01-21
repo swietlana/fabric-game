@@ -88,6 +88,14 @@ bool AppDelegate::applicationDidFinishLaunching()
 	// run
 	director->runWithScene(scene);
 
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User1", 120);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User2", 210);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User3", 80);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User4", -20);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User5", 15);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User6", 100);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User7", 30);
+	cocos2d::UserDefault::getInstance()->setIntegerForKey("User8", -10);
 	return true;
 }
 

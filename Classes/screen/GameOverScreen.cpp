@@ -17,11 +17,11 @@ bool GameOver::init()
 	}
 	CrossLayout::ComposerCocos composer;
 
-	auto _gameOverLabel = cocos2d::Label::createWithSystemFont("Game Over", "Arial", 60);
+	auto _gameOverLabel = cocos2d::Label::createWithSystemFont("Game Over", "Verdana", 60);
 	addChild(_gameOverLabel);
 	composer.center(_gameOverLabel).inParent();
 
-	auto playButton = cocos2d::ui::Button::create("menu/play_button.png");
+	auto playButton = cocos2d::ui::Button::create("play_red.png");
 	addChild(playButton);
 	composer.topEdge(playButton).moveTo().bottomEdge(_gameOverLabel, 60);
 	composer.rightEdge(playButton).moveTo().parentRightEdge(100);
@@ -34,7 +34,7 @@ bool GameOver::init()
 										  }
 									  });
 
-	auto exitButton = cocos2d::ui::Button::create("menu/exit_button.png");
+	auto exitButton = cocos2d::ui::Button::create("power_red.png");
 	addChild(exitButton);
 	composer.topEdge(exitButton).moveTo().bottomEdge(_gameOverLabel, 60);
 	composer.leftEdge(exitButton).moveTo().parentLeftEdge(100);

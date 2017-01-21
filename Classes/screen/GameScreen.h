@@ -49,5 +49,6 @@ private:
 	void updatePointsLabel();
 	void createRandomJar();
 	void checkForGameOver();
+	void saveScore();
 
 };
